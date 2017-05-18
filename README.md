@@ -2,6 +2,20 @@
 
 Get list of uris for published resources updated / deleted since timestamp.
 
+## Setup
+
+Add the plugin to `config.rb`:
+
+```ruby
+AppConfig[:plugins] << 'resource_updates'
+```
+
+This plugin adds views to MySQL, to run the migrations:
+
+```bash
+./scripts/setup_database.sh
+```
+
 ## Example
 
 ```bash
