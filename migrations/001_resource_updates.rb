@@ -6,14 +6,14 @@ Sequel.migration do
     self << %{
 CREATE OR REPLACE VIEW resource_update_via_r AS
   SELECT DISTINCT CONCAT('/repositories/', r.repo_id, '/resources/', r.id) as uri,
-    r.id, r.repo_id, r.publish, r.suppressed, r.system_mtime
+    r.id, r.repo_id, r.publish, r.suppressed, r.user_mtime
   FROM resource r
     }
 
     self << %{
 CREATE OR REPLACE VIEW resource_update_via_ao AS
   SELECT DISTINCT CONCAT('/repositories/', r.repo_id, '/resources/', r.id) as uri,
-    r.id, r.repo_id, r.publish, r.suppressed, ao.system_mtime
+    r.id, r.repo_id, r.publish, r.suppressed, ao.user_mtime
   FROM resource r
   JOIN archival_object ao on ao.root_record_id = r.id
     }
@@ -21,7 +21,7 @@ CREATE OR REPLACE VIEW resource_update_via_ao AS
     self << %{
 CREATE OR REPLACE VIEW resource_update_via_do AS
   SELECT DISTINCT CONCAT('/repositories/', r.repo_id, '/resources/', r.id) as uri,
-    r.id, r.repo_id, r.publish, r.suppressed, do.system_mtime
+    r.id, r.repo_id, r.publish, r.suppressed, do.user_mtime
   FROM digital_object do
   JOIN instance_do_link_rlshp rlshp ON rlshp.digital_object_id = do.id
   JOIN instance i ON i.id = rlshp.instance_id
@@ -31,7 +31,7 @@ CREATE OR REPLACE VIEW resource_update_via_do AS
     self << %{
 CREATE OR REPLACE VIEW resource_update_via_do_ao AS
   SELECT DISTINCT CONCAT('/repositories/', r.repo_id, '/resources/', r.id) as uri,
-    r.id, r.repo_id, r.publish, r.suppressed, do.system_mtime
+    r.id, r.repo_id, r.publish, r.suppressed, do.user_mtime
   FROM digital_object do
   JOIN instance_do_link_rlshp rlshp ON rlshp.digital_object_id = do.id
   JOIN instance i ON i.id = rlshp.instance_id
@@ -42,7 +42,7 @@ CREATE OR REPLACE VIEW resource_update_via_do_ao AS
     self << %{
 CREATE OR REPLACE VIEW resource_update_via_doc AS
   SELECT DISTINCT CONCAT('/repositories/', r.repo_id, '/resources/', r.id) as uri,
-    r.id, r.repo_id, r.publish, r.suppressed, doc.system_mtime
+    r.id, r.repo_id, r.publish, r.suppressed, doc.user_mtime
   FROM digital_object_component doc
   JOIN digital_object do ON doc.root_record_id = do.id
   JOIN instance_do_link_rlshp rlshp ON rlshp.digital_object_id = do.id
@@ -53,7 +53,7 @@ CREATE OR REPLACE VIEW resource_update_via_doc AS
     self << %{
 CREATE OR REPLACE VIEW resource_update_via_doc_do_ao AS
   SELECT DISTINCT CONCAT('/repositories/', r.repo_id, '/resources/', r.id) as uri,
-    r.id, r.repo_id, r.publish, r.suppressed, doc.system_mtime
+    r.id, r.repo_id, r.publish, r.suppressed, doc.user_mtime
   FROM digital_object_component doc
   JOIN digital_object do ON doc.root_record_id = do.id
   JOIN instance_do_link_rlshp rlshp ON rlshp.digital_object_id = do.id

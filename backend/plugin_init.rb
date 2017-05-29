@@ -17,7 +17,7 @@ module ArchivesSpace
         resource_updates[:updated] = db[:resource_update].where(
           publish: 1,
           suppressed: 0,
-        ){system_mtime >= modified_since_time}.select(:uri).group(:id).all
+        ){user_mtime >= modified_since_time}.select(:uri).group(:id).all
 
         resource_updates[:deleted] = db[:resource_delete].where{
           timestamp >= modified_since_time
