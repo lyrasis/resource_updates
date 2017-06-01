@@ -3,7 +3,9 @@ module ArchivesSpace
   class ResourceUpdate
 
     def self.updates_since(ts)
-      modified_since_time = Time.at(ts)
+      # local server, db session and instance (archivesspace)
+      # timezones may be different so use UTC throughout
+      modified_since_time = Time.at(ts).utc
       resource_updates    = {
         deleted: [],
         updated: [],
@@ -15,13 +17,14 @@ module ArchivesSpace
 
       DB.open do |db|
         resource_updates[:updated] = db[:resource_update].where(
-          publish: 1,
-          suppressed: 0,
-        ){user_mtime >= modified_since_time}.select(:uri).group(:id).all
+          "CONVERT_TZ(user_mtime, @@session.time_zone, '+00:00') >= :mst AND publish = 1 and suppressed = 0",
+          mst: modified_since_time
+        ).select(:uri).group(:id).all
 
-        resource_updates[:deleted] = db[:resource_delete].where{
-          timestamp >= modified_since_time
-        }.select(:uri).all
+        resource_updates[:deleted] = db[:resource_delete].where(
+          "CONVERT_TZ(timestamp, @@session.time_zone, '+00:00') >= :mst",
+          mst: modified_since_time
+        ).select(:uri).all
       end
 
       resource_updates
