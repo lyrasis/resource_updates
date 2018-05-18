@@ -19,7 +19,7 @@ module ArchivesSpace
         resource_updates[:updated] = db[:resource_update].where(
           "CONVERT_TZ(user_mtime, @@session.time_zone, '+00:00') >= :mst AND publish = 1 and suppressed = 0",
           mst: modified_since_time
-        ).select(:uri).group(:id).all
+        ).distinct.select(:uri).all
 
         resource_updates[:deleted] = db[:resource_delete].where(
           "CONVERT_TZ(timestamp, @@session.time_zone, '+00:00') >= :mst",
